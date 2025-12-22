@@ -2,7 +2,7 @@
 # Load language from environment variable(It is set by the hook)
 language = "${env:DBGPT_LANG:-zh}"
 api_keys = []
-encrypt_key = "your_secret_key"
+encrypt_key = "sk-cupmevqfxyhroarauvapjdmepzgphncnaygkptmasajhtmrp"
 
 # Server Configurations
 [service.web]
