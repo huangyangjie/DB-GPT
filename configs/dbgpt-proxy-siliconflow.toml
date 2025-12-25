@@ -37,3 +37,29 @@ api_key = "${env:SILICONFLOW_API_KEY}"
 name = "BAAI/bge-reranker-v2-m3"
 provider = "proxy/siliconflow"
 api_key = "${env:SILICONFLOW_API_KEY}"
+
+#----------------------------------------------------------------------------------------------------------------------
+
+[rag.storage.graph]
+type = "tugraph"
+host="127.0.0.1"
+port=7687
+username="admin"
+password="73@TuGraph"
+enable_summary="True"
+enable_similarity_search="True"
+
+[rag]
+chunk_size=1000
+chunk_overlap=100
+similarity_top_k=5
+similarity_score_threshold=0.0
+max_chunks_once_load=10
+max_threads=1
+rerank_top_k=3
+
+
+[rag.storage.full_text]
+type = "elasticsearch"
+host="127.0.0.1"
+port=9200
