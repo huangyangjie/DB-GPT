@@ -102,18 +102,19 @@ const ChatContent: React.FC<{
     cachePluginContext: DBGPTView[];
   }>(() => {
     if (typeof context !== 'string') {
+      // If context is an object, combine template_name and template_introduce as value
       return {
         relations: [],
-        value: '',
+        value: context.template_name ? `[${context.template_name}]: ${context.template_introduce || ''}` : '',
         cachePluginContext: [],
       };
     }
-    const [value, relation] = context.split('\trelations:');
+    let [contentValue, relation] = context.split('\trelations:');
     const relations = relation ? relation.split(',') : [];
     const cachePluginContext: DBGPTView[] = [];
 
     let cacheIndex = 0;
-    const result = value.replace(/<dbgpt-view[^>]*>[^<]*<\/dbgpt-view>/gi, matchVal => {
+    const result = contentValue.replace(/<dbgpt-view[^>]*>[^<]*<\/dbgpt-view>/gi, matchVal => {
       try {
         const pluginVal = matchVal.replaceAll('\n', '\\n').replace(/<[^>]*>|<\/[^>]*>/gm, '');
         const pluginContext = JSON.parse(pluginVal) as DBGPTView;
@@ -172,16 +173,22 @@ const ChatContent: React.FC<{
   return (
     <div className='flex flex-1 gap-3 mt-6'>
       {/* icon */}
-      <div className='flex flex-shrink-0 items-start'>{isRobot ? <RobotIcon model={model_name} /> : <UserIcon />}</div>
+      <div className={`flex ${isRobot ? 'flex-shrink-0' : 'flex-1'}`}>
+        {isRobot && (
+          <div className='flex flex-shrink-0 items-start'>
+            <RobotIcon model={model_name} />
+          </div>
+        )}
+      </div>
       <div className={`flex ${scene === 'chat_agent' && !thinking ? 'flex-1' : ''} overflow-hidden`}>
         {/* 用户提问 */}
         {!isRobot && (
-          <div className='flex flex-1 relative group'>
+          <div className='flex flex-shrink-0 justify-end relative group items-start gap-3'>
             <div
-              className='flex-1 text-sm text-[#1c2533] dark:text-white'
+              className='text-sm text-[#1c2533] dark:text-white text-right bg-white dark:bg-[#1c2533] p-3 rounded-lg shadow-sm relative'
               style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
             >
-              {typeof context === 'string' && (
+              {value.trim() && (
                 <div>
                   <GPTVis
                     components={{
@@ -190,7 +197,7 @@ const ChatContent: React.FC<{
                         <img
                           src={src}
                           alt={alt || 'image'}
-                          className='max-w-full md:max-w-[80%] lg:max-w-[70%] object-contain'
+                          className='max-w-full md:max-w-[80%] lg:max-w-[70%] object-contain ml-auto'
                           style={{ maxHeight: '200px' }}
                           {...props}
                         />
@@ -202,15 +209,16 @@ const ChatContent: React.FC<{
                   </GPTVis>
                 </div>
               )}
-            </div>
-            {typeof context === 'string' && context.trim() && (
-              <div className='absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                <button
-                  className='flex items-center justify-center w-8 h-8 text-[#525964] dark:text-[rgba(255,255,255,0.6)] hover:text-[#1677ff] dark:hover:text-white transition-colors'
-                  onClick={() => {
-                    if (typeof context === 'string') {
+              {value.trim() && (
+                <div className='absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10'>
+                  <button
+                    className='flex items-center justify-center w-6 h-6 text-[#525964] dark:text-[rgba(255,255,255,0.6)] hover:text-[#1677ff] dark:hover:text-white transition-colors bg-white dark:bg-[#1c2533] rounded-full shadow-sm'
+                    onClick={() => {
+                      // For string context, copy the original context
+                      // For object context, copy the formatted value
+                      const textToCopy = typeof context === 'string' ? context : value;
                       navigator.clipboard
-                        .writeText(context)
+                        .writeText(textToCopy)
                         .then(() => {
                           message.success(t('copy_to_clipboard_success'));
                         })
@@ -218,14 +226,17 @@ const ChatContent: React.FC<{
                           console.error(t('copy_to_clipboard_failed'), err);
                           message.error(t('copy_to_clipboard_failed'));
                         });
-                    }
-                  }}
-                  title={t('copy_to_clipboard')}
-                >
-                  <CopyOutlined />
-                </button>
-              </div>
-            )}
+                    }}
+                    title={t('copy_to_clipboard')}
+                  >
+                    <CopyOutlined />
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className='flex flex-shrink-0 items-start'>
+              <UserIcon />
+            </div>
           </div>
         )}
         {/* ai回答 */}
