@@ -1,0 +1,20 @@
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "你好，我叫黄杨杰，你叫什么名字？"
+        },
+        {
+            "role": "assistant",
+            "content": "你好，黄杨杰！我叫通义千问，是阿里巴巴集团旗下的通义实验室研发的超大规模语言模型。如果你有任何其他问题，欢迎随时问我！",
+            "reasoning_content": null
+        },
+        {
+            "role": "user",
+            "content": "我头疼，挂哪个科？"
+        }
+    ],
+    "model": "Qwen/Qwen3-8B",
+    "chat_mode": "chat_knowledge",
+    "chat_param": "南大一附院知识"
+}

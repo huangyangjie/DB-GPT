@@ -2,7 +2,7 @@
 # Load language from environment variable(It is set by the hook)
 language = "${env:DBGPT_LANG:-zh}"
 api_keys = []
-encrypt_key = "your_secret_key"
+encrypt_key = "sk-cupmevqfxyhroarauvapjdmepzgphncnaygkptmasajhtmrp"
 
 # Server Configurations
 [service.web]
@@ -23,7 +23,7 @@ persist_path = "pilot/data"
 # Model Configurations
 [models]
 [[models.llms]]
-name = "Qwen/Qwen2.5-Coder-32B-Instruct"
+name = "Qwen/Qwen3-8B"
 provider = "proxy/siliconflow"
 api_key = "${env:SILICONFLOW_API_KEY}"
 
@@ -37,3 +37,32 @@ api_key = "${env:SILICONFLOW_API_KEY}"
 name = "BAAI/bge-reranker-v2-m3"
 provider = "proxy/siliconflow"
 api_key = "${env:SILICONFLOW_API_KEY}"
+
+#----------------------------------------------------------------------------------------------------------------------
+
+[rag.storage.graph]
+type = "tugraph"
+host="127.0.0.1"
+port=7687
+username="admin"
+password="73@TuGraph"
+enable_summary="True"
+enable_similarity_search="True"
+
+[rag]
+chunk_size=512
+chunk_overlap=50
+similarity_top_k=5
+similarity_score_threshold=0.0
+max_chunks_once_load=10
+max_threads=1
+rerank_top_k=3
+
+
+[rag.storage.full_text]
+type = "elasticsearch"
+host="127.0.0.1"
+port=9200
+user="admin"
+password="Founder@123"
+

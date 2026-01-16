@@ -112,9 +112,7 @@ class ChatKnowledge(BaseChat):
     async def _handle_final_output(
         self, final_output: ModelOutput, incremental: bool = False
     ):
-        reference = f"\n\n{self.parse_source_view(self.chunks_with_score)}"
         view_message = final_output.text
-        view_message = view_message + reference
 
         if final_output.has_thinking and not incremental:
             view_message = final_output.gen_text_with_thinking(new_text=view_message)
@@ -122,7 +120,7 @@ class ChatKnowledge(BaseChat):
 
     def stream_call_reinforce_fn(self, text):
         """return reference"""
-        return text + f"\n\n{self.parse_source_view(self.chunks_with_score)}"
+        return text
 
     @trace()
     async def generate_input_values(self) -> Dict:

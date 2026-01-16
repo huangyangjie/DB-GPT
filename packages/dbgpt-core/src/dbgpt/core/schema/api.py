@@ -1,5 +1,8 @@
 """API schema module."""
 
+from dbgpt.core.schema.types import ChatCompletionMessageParam
+
+
 import time
 import uuid
 from enum import IntEnum
@@ -82,8 +85,17 @@ class APIChatCompletionRequest(BaseModel):
             if not self.messages:
                 raise ValueError("Empty messages")
             if isinstance(self.messages[0], str):
-                return self.messages[0]
-            return self.messages[0]["content"]
+                return self.messages[-1]
+            # 返回最后一个用户消息的内容
+            reversed_messages = list(reversed(self.messages))
+            for message in reversed_messages:
+                if isinstance(message, dict) and message.get("role") == "user":
+                    return message.get("content", "")
+            # 如果没有用户消息，返回最后一个消息的内容
+            last_message = self.messages[-1]
+            if isinstance(last_message, dict):
+                return last_message.get("content", "")
+            return str(last_message)
         else:
             raise ValueError("Invalid messages type")
 

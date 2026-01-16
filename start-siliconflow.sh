@@ -1,0 +1,1 @@
+uv run dbgpt start webserver --config configs/dbgpt-proxy-siliconflow.toml
