@@ -1,5 +1,6 @@
 #!/bin/bash
-
+echo "get ready to started process!"
+ps -ef | grep java
 # 定义进程识别字符串
 PROCESS="dbgpt start webserver --config configs/dbgpt-proxy-siliconflow.toml"
 
@@ -17,4 +18,5 @@ fi
 # 后台启动进程
 echo "Starting new process in background..."
 nohup uv run $PROCESS > dbgpt-webserver.log 2>&1 &
+ps -ef | grep java
 echo "Process started successfully!"
